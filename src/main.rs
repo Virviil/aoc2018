@@ -1,10 +1,17 @@
+#[macro_use]
+extern crate lazy_static;
 use std::fs::File;
 use std::io::prelude::*;
 
+extern crate chrono;
 extern crate clap;
+extern crate regex;
 
 mod checksum;
+mod fabric;
 mod frequency;
+mod guards;
+mod polymer;
 
 use clap::{App, Arg, SubCommand};
 
@@ -56,7 +63,51 @@ fn main() {
                         .alias("p2")
                         .about("Package intersection"),
                 ),
-        ).get_matches();
+        ).subcommand(
+            SubCommand::with_name("fabric")
+                .about("Solution for 3 day's puzzles with fabric")
+                .version("1.0")
+                .alias("d3")
+                .subcommand(
+                    SubCommand::with_name("overlap")
+                        .alias("p1")
+                        .about("Count overlap"),
+                ).subcommand(
+                    SubCommand::with_name("unoverlaped")
+                        .alias("p2")
+                        .about("Uniq claim"),
+                ),
+        ).subcommand(
+            SubCommand::with_name("guards")
+                .about("Solution for 4 day's puzzles with fabric")
+                .version("1.0")
+                .alias("d4")
+                .subcommand(
+                    SubCommand::with_name("longest")
+                        .alias("p1")
+                        .about("Longest multiday streak for particular minute"),
+                ).subcommand(
+                    SubCommand::with_name("frequency")
+                        .alias("p2")
+                        .about("Uniq claim"),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name("polymer")
+                .about("Solution for 5 day's puzzles with fabric")
+                .version("1.0")
+                .alias("d5")
+                .subcommand(
+                    SubCommand::with_name("triggered")
+                        .alias("p1")
+                        .about("After triggering"),
+                ).subcommand(
+                    SubCommand::with_name("best_strand")
+                        .alias("p2")
+                        .about("Best strand to be removed"),
+                ),
+        )
+        .get_matches();
 
     let input_file = matches.value_of("input").unwrap();
     let _output = matches.value_of("output");
@@ -81,7 +132,40 @@ fn main() {
             Some("intersection") => {
                 let result = checksum::similar_packages(read_file(input_file));
                 println!("{}", result);
-            },
+            }
+            _ => println!("No subcommands were used for command frequency! Try to use help"),
+        },
+        ("fabric", Some(matches)) => match matches.subcommand_name() {
+            Some("overlap") => {
+                let result = fabric::overlap(read_file(input_file));
+                println!("{}", result);
+            }
+            Some("unoverlaped") => {
+                let result = fabric::unoverlaped(read_file(input_file));
+                println!("{}", result);
+            }
+            _ => println!("No subcommands were used for command frequency! Try to use help"),
+        },
+        ("guards", Some(matches)) => match matches.subcommand_name() {
+            Some("longest") => {
+                let result = guards::longest(read_file(input_file));
+                println!("{}", result);
+            }
+            Some("frequency") => {
+                let result = guards::most_frequent(read_file(input_file));
+                println!("{}", result);
+            }
+            _ => println!("No subcommands were used for command frequency! Try to use help"),
+        },
+        ("polymer", Some(matches)) => match matches.subcommand_name() {
+            Some("triggered") => {
+                let result = polymer::triggered(read_file(input_file));
+                println!("{}", result);
+            }
+            Some("best_strand") => {
+                let result = polymer::best_strand(read_file(input_file));
+                println!("{}", result);
+            }
             _ => println!("No subcommands were used for command frequency! Try to use help"),
         },
         ("", None) => println!("No subcommands were used! Try to use help"),
