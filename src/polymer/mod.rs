@@ -36,7 +36,7 @@ where
     T: PolymerItem + Clone,
 {
     let mut changed = false;
-    let mut new_polymer: Vec<T> = Vec::new();
+    let mut new_polymer: Vec<T> = Vec::with_capacity(polymer.len());
     let mut polymer_iterator = polymer.iter().peekable();
 
     let mut skip_next = false;

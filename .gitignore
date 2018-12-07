@@ -3,3 +3,4 @@
 
 # Ignoring everything inside input directory - it's personal specific data
 input/*
+output/*

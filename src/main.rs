@@ -7,6 +7,7 @@ extern crate chrono;
 extern crate clap;
 extern crate regex;
 
+mod area;
 mod checksum;
 mod fabric;
 mod frequency;
@@ -91,8 +92,7 @@ fn main() {
                         .alias("p2")
                         .about("Uniq claim"),
                 ),
-        )
-        .subcommand(
+        ).subcommand(
             SubCommand::with_name("polymer")
                 .about("Solution for 5 day's puzzles with fabric")
                 .version("1.0")
@@ -106,8 +106,21 @@ fn main() {
                         .alias("p2")
                         .about("Best strand to be removed"),
                 ),
-        )
-        .get_matches();
+        ).subcommand(
+            SubCommand::with_name("area")
+                .about("Solution for 6 day's puzzles with fabric")
+                .version("1.0")
+                .alias("d6")
+                .subcommand(
+                    SubCommand::with_name("largest")
+                        .alias("p1")
+                        .about("Smallest area"),
+                ).subcommand(
+                    SubCommand::with_name("region")
+                        .alias("p2")
+                        .about("Safe are size"),
+                ),
+        ).get_matches();
 
     let input_file = matches.value_of("input").unwrap();
     let _output = matches.value_of("output");
@@ -164,6 +177,17 @@ fn main() {
             }
             Some("best_strand") => {
                 let result = polymer::best_strand(read_file(input_file));
+                println!("{}", result);
+            }
+            _ => println!("No subcommands were used for command frequency! Try to use help"),
+        },
+        ("area", Some(matches)) => match matches.subcommand_name() {
+            Some("largest") => {
+                let result = area::largest(read_file(input_file));
+                println!("{}", result);
+            }
+            Some("region") => {
+                let result = area::region(read_file(input_file));
                 println!("{}", result);
             }
             _ => println!("No subcommands were used for command frequency! Try to use help"),
