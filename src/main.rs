@@ -13,6 +13,7 @@ mod fabric;
 mod frequency;
 mod guards;
 mod polymer;
+mod steps;
 
 use clap::{App, Arg, SubCommand};
 
@@ -120,6 +121,20 @@ fn main() {
                         .alias("p2")
                         .about("Safe are size"),
                 ),
+        ).subcommand(
+            SubCommand::with_name("steps")
+                .about("Solution for 7 day's puzzles with fabric")
+                .version("1.0")
+                .alias("d7")
+                .subcommand(
+                    SubCommand::with_name("sequence")
+                        .alias("p1")
+                        .about("Smallest area"),
+                ).subcommand(
+                    SubCommand::with_name("parallel")
+                        .alias("p2")
+                        .about("Safe are size"),
+                ),
         ).get_matches();
 
     let input_file = matches.value_of("input").unwrap();
@@ -188,6 +203,17 @@ fn main() {
             }
             Some("region") => {
                 let result = area::region(read_file(input_file));
+                println!("{}", result);
+            }
+            _ => println!("No subcommands were used for command frequency! Try to use help"),
+        },
+        ("steps", Some(matches)) => match matches.subcommand_name() {
+            Some("sequence") => {
+                let result = steps::sequence(read_file(input_file));
+                println!("{}", result);
+            }
+            Some("parallel") => {
+                let result = steps::parallel(read_file(input_file), 60, 5);
                 println!("{}", result);
             }
             _ => println!("No subcommands were used for command frequency! Try to use help"),
